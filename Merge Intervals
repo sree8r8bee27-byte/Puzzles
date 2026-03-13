@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Interval;
+
+// Compare intervals by start time
+int compare(const void* a, const void* b) {
+    return ((Interval*)a)->start - ((Interval*)b)->start;
+}
+
+void mergeIntervals(Interval arr[], int n) {
+    if (n <= 0) return;
+    
+    // Sort by start time
+    qsort(arr, n, sizeof(Interval), compare);
+    
+    int index = 0;  // Index for result
+    
+    for (int i = 1; i < n; i++) {
+        // If current interval overlaps with previous, merge them
+        if (arr[index].end >= arr[i].start) {
+            if (arr[index].end < arr[i].end)
+                arr[index].end = arr[i].end;
+        } else {
+            index++;
+            arr[index] = arr[i];
+        }
+    }
+    
+    printf("Merged intervals:\n");
+    for (int i = 0; i <= index; i++) {
+        printf("[%d, %d]\n", arr[i].start, arr[i].end);
+    }
+}
+
+int main() {
+    Interval arr[] = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Original intervals:\n");
+    for (int i = 0; i < n; i++) {
+        printf("[%d, %d]\n", arr[i].start, arr[i].end);
+    }
+    printf("\n");
+    
+    mergeIntervals(arr, n);
+    
+    return 0;
+}
