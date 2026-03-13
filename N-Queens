@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define N 8  // Change board size here
+
+void printBoard(int board[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf(board[i][j] ? "Q " : ". ");
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+bool isSafe(int board[N][N], int row, int col) {
+    // Check this row on left side
+    for (int i = 0; i < col; i++)
+        if (board[row][i]) return false;
+    
+    // Check upper diagonal on left side
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j]) return false;
+    
+    // Check lower diagonal on left side
+    for (int i = row, j = col; j >= 0 && i < N; i++, j--)
+        if (board[i][j]) return false;
+    
+    return true;
+}
+
+bool solveNQueens(int board[N][N], int col) {
+    if (col >= N) return true;  // All queens placed
+    
+    for (int i = 0; i < N; i++) {
+        if (isSafe(board, i, col)) {
+            board[i][col] = 1;  // Place queen
+            
+            if (solveNQueens(board, col + 1))
+                return true;
+            
+            board[i][col] = 0;  // Backtrack
+        }
+    }
+    return false;  // No solution exists
+}
+
+int main() {
+    int board[N][N] = {0};
+    
+    printf("Solving %d-Queens puzzle...\n\n", N);
+    
+    if (solveNQueens(board, 0)) {
+        printBoard(board);
+    } else {
+        printf("Solution does not exist\n");
+    }
+    
+    return 0;
+}
